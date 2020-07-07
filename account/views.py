@@ -12,11 +12,16 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
+from django.contrib.auth.forms import UserCreationForm
+
 def index(request):
     return HttpResponse("Hello, world. You're at Home.")
 
 def signup(request):
-    return render(request, 'account/signup.html')
+    context = {
+        'form' : UserCreationForm
+    }
+    return render(request, 'account/signup.html', context)
 
 def login_view(request):
     ret_page = request.GET.get('next', '')
@@ -45,6 +50,7 @@ def login_view(request):
     else:
         return render(request, 'account/login.html', context)
 
+@login_required
 def logout_view(request):
     logout(request)
     return HttpResponse("logged out")
@@ -52,26 +58,13 @@ def logout_view(request):
 @login_required
 def home_view(request):
     return HttpResponse("this is home")
-
-def send_email(request):
-    subject = "check"
-    message = "check mail from developer dashboard"
-    from_email = settings.EMAIL_HOST_USER
-    if subject and message and from_email:
-        try:
-            send_mail(subject, message, from_email, ['abhishekchaudhary0220@gmail.com'])
-        except BadHeaderError:
-            return HttpResponse('Invalid header found.')
-        return HttpResponseRedirect('/contact/thanks/')
-    else:
-        # In reality we'd use a form class
-        # to get proper validation errors.
-        return HttpResponse('Make sure all fields are entered and valid.')
-    
+ 
 def forget_view(request):
     return auth_views.PasswordResetView.as_view(
         template_name = 'account/forget_password.html',
         email_template_name = 'account/reset_email.html',
+        html_email_template_name = 'account/reset_email.html',
+        from_email = "do-not-reply@dashboard.iamabhishek.co",
         success_url =reverse_lazy('account:email_sent')
     )(request)
 
@@ -84,3 +77,4 @@ def password_change(request, uidb64, token):
     return auth_views.PasswordResetConfirmView.as_view(
         template_name = 'account/reset_link.html'
     )(request, uidb64, token)
+

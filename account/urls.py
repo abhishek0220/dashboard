@@ -18,5 +18,4 @@ urlpatterns = [
     path('reset/done/',auth_views.PasswordResetCompleteView.as_view(
         template_name = 'account/reset_done.html'
         ) , name = "reset_done"),
-    path('send/', views.send_email, name='mail'),
 ]
