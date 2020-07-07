@@ -107,6 +107,17 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LOGIN_URL = '/LogIn/'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = SECRETS['email_id']
+EMAIL_HOST_PASSWORD = SECRETS['email_pass']
+'''
+
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = SECRETS["SENDGRID_API_KEY"]
+'''
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
