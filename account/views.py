@@ -1,27 +1,108 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect 
 from django.core.mail import BadHeaderError, send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth import logout
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
-from django.contrib.auth.forms import UserCreationForm
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
+import time
+import random
+import string
+
+#self functions
+
+def validate_input(inp):
+    if(inp is None):
+        return False
+    if(len(inp) != len(inp.strip())):
+        return False
+    if(len(inp.split()) != 1):
+        return False
+    return True
+
+def createcode():
+    code = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    return code
 
 def index(request):
     return HttpResponse("Hello, world. You're at Home.")
 
 def signup(request):
-    context = {
-        'form' : UserCreationForm
-    }
+    context = {}
+    if(request.method == 'POST'):
+        username = request.POST.get('username')
+        password_1 = request.POST.get('password1')
+        password_2 = request.POST.get('password2')
+        if(validate_input(username) == False):
+            context = {'error_message' : "Invalid Username"}
+        elif((validate_input(password_1) and validate_input(password_2)) == False ):
+            context = {'error_message' : "Invalid Password"}
+        elif(password_1 != password_2):
+            context = {'error_message' : "Password not match"}
+        elif(len(password_1) < 8):
+            context = {'error_message' : "Password less than 8 chars"}
+        else:
+            request.session['username'] = username
+            request.session['password'] = password_1
+            request.session['started'] = time.time()
+            request.session['code_entered'] = 0
+            verf_code = createcode()
+            request.session['verf_code'] = verf_code
+            user_email = username + "@iitjammu.ac.in"
+            email_body = render_to_string('account/signup_otp_email.html', {'username' : username, 'verf_code' : verf_code })
+            email = EmailMessage(
+                subject= 'Verification Code',
+                body = email_body,
+                from_email = 'dashboard@iamabhishek.co',
+                to = [user_email],
+            )
+            email.content_subtype = "html"
+            email.send()
+            return HttpResponseRedirect(reverse_lazy('account:verify'))
     return render(request, 'account/signup.html', context)
+
+def signup_verify(request):
+
+    if((time.time() - request.session.get('started',0)) < 180 and request.session.get('code_entered',100) < 2):
+        context = {}
+        if(request.method == "POST"):
+            request.session['code_entered'] = request.session.get('code_entered') + 1
+            verf_code = request.POST.get('verf_code','')
+            code = request.session.get('verf_code','')
+            if(code != "" and code == verf_code):
+                username = request.session['username']
+                password = request.session['password']
+                user=User.objects.create_user(
+                    username= username , 
+                    password= password,
+                    email = username + "@iitjammu.ac.in" ,
+                )
+                gru = Group.objects.get(name='members') 
+                gru.user_set.add(user)
+                del request.session['code_entered']
+                del request.session['username']
+                del request.session['password']
+                del request.session['verf_code']
+                return HttpResponse("done")
+            else:
+                context = {
+                    'error_message' : "Wrong Code"
+                }
+        return render(request, 'account/signup_otp.html')
+    else:
+        return redirect('/Signup/')
+    
+
 
 def login_view(request):
     ret_page = request.GET.get('next', '')
@@ -64,7 +145,7 @@ def forget_view(request):
         template_name = 'account/forget_password.html',
         email_template_name = 'account/reset_email.html',
         html_email_template_name = 'account/reset_email.html',
-        from_email = "do-not-reply@dashboard.iamabhishek.co",
+        from_email = "dashboard@iamabhishek.co",
         success_url =reverse_lazy('account:email_sent')
     )(request)
 

@@ -1,0 +1,13 @@
+<h1>SignUP Form</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <p>
+        <label for="id_verf">Verification Code:</label>
+        <input type="text" name="verf_code" maxlength="150" autocapitalize="none" autofocus required id="id_verf">
+        <br>
+        <span class="helptext">Enter the 8 digit alpha-numeric verification code sent on IIT Jammmu email associated with Entry Number.</span>
+    </p>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <input type="submit" value="Validate">
+</form>
