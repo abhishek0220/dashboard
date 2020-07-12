@@ -1,38 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>SignUP</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="{% static 'css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+        <link href="{% static 'css/style.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+        <link href="{% static 'css/form.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+    </head>
+    <body>
+        <div class="valign-wrapper" style="height: 100vh;">
+            <div class="container valign-wrapper" style="height: 90vh;">
+                <div class="row" id="form" style="margin-bottom: 0;">
+                    <div class="col m12 l4 offset-l1 form-image" style="padding: 0;" >
+                        <div id="layer" class="left-align">
+                            <h5>SignUP</h5><br>
+                            <h6>This application is much better when you have an account</h6>
+                            <h6>Get Yourself One</h6>
+                            <div class="hide-on-large-only" id="mobile">
+                                <form class="col s12" method="POST">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <i class="material-icons prefix" style="color: whitesmoke;">account_circle</i>
+                                            <input type="text" name="username" maxlength="150"  required id="mid_username">
+                                            <label for="mid_username">Entry Number:</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s6">
+                                            <i class="material-icons prefix" style="color: whitesmoke;">perm_identity</i>
+                                            <label for="mid_fname">First Name:</label>
+                                            <input type="text" name="fname" maxlength="150" required id="mid_fname">
+                                        </div>
+                                        <div class="input-field col s6">
+                                            <label for="mid_lname">Last Name:</label>
+                                            <input type="text" name="lname" maxlength="150" id="mid_lname">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="input-field col s12">
+                                        <select name="gender" id="mgender">
+                                            <option value="" disabled selected>Select</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Others">Others</option>
+                                        </select>
+                                        <label>Gender:</label> 
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s6">
+                                            <label for="mid_password1">Password:</label>
+                                            <input type="password" name="password1" autocomplete="new-password" required id="mid_password1">
+                                        </div>
+                                        <div class="input-field col s6">
+                                            <label for="mid_password2">Password confirmation:</label>
+                                            <input type="password" name="password2" autocomplete="new-password" required id="mid_password2">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                      <div class="col s12">
+                                        <div class="input-field inline">
+                                            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="row center" >
+                                        <button class="btn-small waves-effect waves-light blue accent-4">Create Account</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="cont-bottom center-align">
+                                <h6>Already have an Account? <a href="{% url 'account:login' %}"><b>Log IN</b></a> </h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col m12 l6 pink lighten-5 valign-wrapper hide-on-med-and-down" style="color: black; height: 100%; position: relative; padding: 0;" id="desktop">
+                        <div class="pink" style=" width: 100%; height: 5px; position: absolute; top: 0; display: inline-block;"></div>
+                        <div>
+                            <form class="col s12" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix" style="color: black;">account_circle</i>
+                                        <input type="text" name="username" maxlength="150"  required id="id_username">
+                                        <label for="id_username">Entry Number:</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        <i class="material-icons prefix" style="color: black;">perm_identity</i>
+                                        <label for="id_fname">First Name:</label>
+                                        <input type="text" name="fname" maxlength="150" required id="id_fname">
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <label for="id_lname">Last Name:</label>
+                                        <input type="text" name="lname" maxlength="150" id="id_lname">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="input-field col s12">
+                                    <select name="gender" id="gender">
+                                        <option value="" disabled selected>Select</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                    <label>Gender:</label> 
+                                  </div>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        <label for="id_password1">Password:</label>
+                                        <input type="password" name="password1" autocomplete="new-password" required id="id_password1">
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <label for="id_password2">Password confirmation:</label>
+                                        <input type="password" name="password2" autocomplete="new-password" required id="id_password2">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                  <div class="col s12">
+                                    <div class="input-field inline">
+                                        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row center" >
+                                    <button class="btn-small waves-effect waves-light blue accent-4">Create Account</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+          
+        
+          <!--  Scripts-->
+            <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+            <script src="{% static 'js/materialize.js' %}"></script>
+            <script>
+                $(document).ready(function(){
+                    $('select').formSelect();
+                });
+            </script>
+
+    </body>
+</html>
+<!--
 <h1>SignUP Form</h1>
 <form method="post">
-    {% csrf_token %}
-    <p>
-        <label for="id_username">Entry Number:</label>
-        <input type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required id="id_username">
-    </p>
-    <p>
-        <label for="id_fname">First Name:</label>
-        <input type="text" name="fname" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required id="id_fname">
-        <br><br>
-        <label for="id_lname">Last Name:</label>
-        <input type="text" name="lname" maxlength="150" autocapitalize="none" autocomplete="username" autofocus id="id_lname">
-    </p>
-    <p>
-        <label for="gender">Gender:</label>
-        <select name="gender" id="gender">
-            <option value="" disabled selected>Select</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Others">Others</option>
-        </select> 
-    </p>
-    <p>
-        <label for="id_password1">Password:</label>
-        <input type="password" name="password1" autocomplete="new-password" required id="id_password1">
-        <br><br>
-        <label for="id_password2">Password confirmation:</label>
-        <input type="password" name="password2" autocomplete="new-password" required id="id_password2">
-        <span class="helptext">
-            <ul>
-                <li>Your password must contain at least 8 characters.</li>
-            </ul>
-        </span>
-    </p>
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <input type="submit" value="Create">
-</form>
+                            {% csrf_token %}
+                            <p>
+                                <label for="id_username">Entry Number:</label>
+                                <input type="text" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required id="id_username">
+                            </p>
+                            <p>
+                                <label for="id_fname">First Name:</label>
+                                <input type="text" name="fname" maxlength="150" autocapitalize="none" autocomplete="username" autofocus required id="id_fname">
+
+                                <label for="id_lname">Last Name:</label>
+                                <input type="text" name="lname" maxlength="150" autocapitalize="none" autocomplete="username" autofocus id="id_lname">
+                            </p>
+                            <p>
+                                <label for="gender">Gender:</label>
+                                <select name="gender" id="gender">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Others">Others</option>
+                                </select> 
+                            </p>
+                            <p>
+                                <label for="id_password1">Password:</label>
+                                <input type="password" name="password1" autocomplete="new-password" required id="id_password1">
+                                <br><br>
+                                <label for="id_password2">Password confirmation:</label>
+                                <input type="password" name="password2" autocomplete="new-password" required id="id_password2">
+                                <span class="helptext">
+                                    <ul>
+                                        <li>Your password must contain at least 8 characters.</li>
+                                    </ul>
+                                </span>
+                            </p>
+                            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+                            <input type="submit" value="Create">
+                        </form>
+-->
