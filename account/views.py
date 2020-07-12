@@ -39,7 +39,18 @@ def index(request):
     return HttpResponse("Hello, world. You're at Home.")
 
 def signup(request):
-    context = {}
+    context = {
+        "fields" : [
+            [
+                {
+                    'name' : 'Entry Number',
+                    'id' : 'username',
+                    'size' : '12',
+                    'icon' : 'account_circle'
+                }                
+            ]   
+        ]
+    }
     if(request.method == 'POST'):
         username = request.POST.get('username')
         password_1 = request.POST.get('password1')
@@ -121,6 +132,7 @@ def signup_verify(request):
         return render(request, 'account/signup_otp.html')
     else:
         return redirect('/Signup/')
+        #return render(request, 'account/signup_otp.html')
     
 
 
@@ -141,7 +153,7 @@ def login_view(request):
         else:
             context = {
                 'args':ret_param,
-                'error_message' : "wrong"
+                'error_message' : "Wrong ID or Password"
             }
     except(KeyError):
         if(request.user.is_authenticated):
