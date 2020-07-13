@@ -39,20 +39,11 @@ def index(request):
     return HttpResponse("Hello, world. You're at Home.")
 
 def signup(request):
-    context = {
-        "fields" : [
-            [
-                {
-                    'name' : 'Entry Number',
-                    'id' : 'username',
-                    'size' : '12',
-                    'icon' : 'account_circle'
-                }                
-            ]   
-        ]
-    }
+    if(request.user.is_authenticated):
+        return HttpResponseRedirect(reverse_lazy('account:home'))
+    context = {}
     if(request.method == 'POST'):
-        username = request.POST.get('username')
+        username = request.POST.get('username').upper()
         password_1 = request.POST.get('password1')
         password_2 = request.POST.get('password2')
         fname = request.POST.get('fname')
@@ -94,7 +85,6 @@ def signup(request):
     return render(request, 'account/signup.html', context)
 
 def signup_verify(request):
-
     if((time.time() - request.session.get('started',0)) < 180 and request.session.get('code_entered',100) < 2):
         context = {}
         if(request.method == "POST"):
@@ -107,16 +97,20 @@ def signup_verify(request):
             if(code != "" and code == verf_code):
                 username = request.session['username']
                 password = request.session['password']
-                user=Member.objects.create_user(
-                    username= username , 
-                    password= password,
-                    email = username + "@iitjammu.ac.in" ,
-                    first_name = fname,
-                    last_name = lname,
-                    gender = gender,
-                )
-                gru = Group.objects.get_or_create(name='members')[0] 
-                gru.user_set.add(user)
+                try:
+                    user=Member.objects.create_user(
+                        username= username , 
+                        password= password,
+                        email = username + "@iitjammu.ac.in" ,
+                        first_name = fname,
+                        last_name = lname,
+                        gender = gender,
+                    )
+                    gru = Group.objects.get_or_create(name='members')[0] 
+                    gru.user_set.add(user)
+                    added = True
+                except:
+                    added = False
                 del request.session['code_entered']
                 del request.session['username']
                 del request.session['password']
@@ -124,7 +118,12 @@ def signup_verify(request):
                 del request.session['fname'] 
                 del request.session['lname'] 
                 del request.session['gender']
-                return HttpResponse("done")
+                if(added == True):
+                    user_log = authenticate(request, username=username, password=password)
+                    login(request, user)
+                    return HttpResponseRedirect(reverse_lazy('account:home'))
+                else:
+                    return HttpResponse("User already Exists")
             else:
                 context = {
                     'error_message' : "Wrong Code"
@@ -144,7 +143,7 @@ def login_view(request):
     if(ret_page == ''):
         ret_page = '/home/'
     try:
-        username = request.POST['username']
+        username = request.POST['username'].upper()
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
@@ -173,6 +172,8 @@ def home_view(request):
     return HttpResponse("this is home")
  
 def forget_view(request):
+    if(request.user.is_authenticated):
+        return HttpResponseRedirect(reverse_lazy('account:home'))
     return auth_views.PasswordResetView.as_view(
         template_name = 'account/forget_password.html',
         email_template_name = 'account/reset_email.html',
@@ -182,12 +183,9 @@ def forget_view(request):
     )(request)
 
 def email_sent(request):
+    if(request.user.is_authenticated):
+        return HttpResponseRedirect(reverse_lazy('account:home'))
     return auth_views.PasswordResetDoneView.as_view(
         template_name = 'account/forget_done.html'
     )(request)
-
-def password_change(request, uidb64, token):
-    return auth_views.PasswordResetConfirmView.as_view(
-        template_name = 'account/reset_link.html'
-    )(request, uidb64, token)
 
