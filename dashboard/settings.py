@@ -8,17 +8,26 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+
 # SECURITY WARNING: keep the secret key used in production secret! 
 with Path(BASE_DIR).joinpath('conf', 'secrets.json').open() as handle:
     SECRETS = json.load(handle)
 
-SECRET_KEY = str(SECRETS['secret_key'])
-SUPERFEEDR_CREDS = SECRETS.get('superfeedr_creds')
+def getvar(ab):
+    try:
+        val = os.environ[ab]
+    except KeyError:
+        val = SECRETS.get(ab)
+    print("-------",ab,val)
+    return val
+
+SECRET_KEY = getvar('secret_key')
+SUPERFEEDR_CREDS = getvar('superfeedr_creds')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = getvar('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.43.6']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -104,12 +113,12 @@ EMAIL_HOST_PASSWORD = SECRETS['email_pass']
 '''
 
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = SECRETS["SENDGRID_API_KEY"]
+SENDGRID_API_KEY = getvar("SENDGRID_API_KEY")
 # Toggle sandbox mode (when running in DEBUG mode)
-SENDGRID_SANDBOX_MODE_IN_DEBUG=True
+SENDGRID_SANDBOX_MODE_IN_DEBUG= getvar('DEBUG')
 
 # echo to stdout or any other file-like object that is passed to the backend via the stream kwarg.
-SENDGRID_ECHO_TO_STDOUT=True
+SENDGRID_ECHO_TO_STDOUT= True
 
 AUTH_USER_MODEL = 'account.Member' 
 
