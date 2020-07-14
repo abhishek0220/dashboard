@@ -10,8 +10,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: keep the secret key used in production secret! 
-with Path(BASE_DIR).joinpath('conf', 'secrets.json').open() as handle:
-    SECRETS = json.load(handle)
+try:
+    with Path(BASE_DIR).joinpath('conf', 'secrets.json').open() as handle:
+        SECRETS = json.load(handle)
+except:
+    SECRETS = {}
 
 def getvar(ab):
     try:
