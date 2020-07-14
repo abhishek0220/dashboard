@@ -28,7 +28,7 @@ SECRET_KEY = getvar('secret_key')
 SUPERFEEDR_CREDS = getvar('superfeedr_creds')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (getvar('DEBUG') == 'False')
+DEBUG = (getvar('DEBUG') != 'False')
 
 ALLOWED_HOSTS = ['*']
 
@@ -118,10 +118,10 @@ EMAIL_HOST_PASSWORD = SECRETS['email_pass']
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 SENDGRID_API_KEY = getvar("SENDGRID_API_KEY")
 # Toggle sandbox mode (when running in DEBUG mode)
-SENDGRID_SANDBOX_MODE_IN_DEBUG= (getvar('DEBUG') == 'False')
+SENDGRID_SANDBOX_MODE_IN_DEBUG= False
 
 # echo to stdout or any other file-like object that is passed to the backend via the stream kwarg.
-SENDGRID_ECHO_TO_STDOUT= True
+SENDGRID_ECHO_TO_STDOUT= False
 
 AUTH_USER_MODEL = 'account.Member' 
 
