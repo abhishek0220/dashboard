@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 from django.contrib.auth.models import User, Group
-from .models import Member
+from .models import Member, Pin
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.contrib.auth import views as auth_views
@@ -19,7 +19,7 @@ from django.template.loader import render_to_string
 import time
 import random
 import string
-
+from django.utils import timezone
 #self functions
 
 def validate_input(inp):
@@ -36,7 +36,7 @@ def createcode():
     return code
 
 def index(request):
-    return HttpResponse("Hello, world. You're at Home.")
+    return HttpResponse("its home")
 
 def signup(request):
     if(request.user.is_authenticated):
@@ -162,14 +162,25 @@ def login_view(request):
     else:
         return render(request, 'account/login.html', context)
 
-@login_required
 def logout_view(request):
     logout(request)
-    return HttpResponse("logged out")
+    return HttpResponseRedirect(reverse_lazy('account:login'))
 
 @login_required
 def home_view(request):
-    return HttpResponse("this is home")
+    if(request.method == 'POST'):
+        content = request.POST['pin']
+        if(content):
+            pins = Pin(
+                author = request.user,
+                content = content,
+                pub_date = timezone.now()
+            )
+            pins.save()
+
+    pins = Pin.objects.order_by('-pub_date')
+    context = {'pins':pins}
+    return render(request, 'account/home/home.html', context)
  
 def forget_view(request):
     if(request.user.is_authenticated):

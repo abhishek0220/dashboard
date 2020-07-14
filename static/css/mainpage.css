@@ -1,0 +1,17 @@
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background-image: url(../images/mitchell-luo-e4zrXLYHsMc-unsplash.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+#pinform{
+    border-radius: 0px 0px 0px 30px;
+}
+main {
+    flex: 1 0 auto;
+  }
