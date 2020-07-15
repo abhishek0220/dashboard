@@ -1,8 +1,13 @@
 import os
 import json
 from pathlib import Path
+
+from dotenv import load_dotenv
+load_dotenv()
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print("--",BASE_DIR,type(BASE_DIR))
 
 
 # Quick-start development settings - unsuitable for production
@@ -10,26 +15,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: keep the secret key used in production secret! 
-try:
-    with Path(BASE_DIR).joinpath('conf', 'secrets.json').open() as handle:
-        SECRETS = json.load(handle)
-except:
-    SECRETS = {}
 
-def getvar(ab):
-    try:
-        val = os.environ[ab]
-    except KeyError:
-        val = SECRETS.get(ab)
-    print("-------",ab,val)
-    return val
 
-SECRET_KEY = getvar('secret_key')
-SUPERFEEDR_CREDS = getvar('superfeedr_creds')
-
+SECRET_KEY = os.getenv('secret_key')
+SUPERFEEDR_CREDS = os.getenv('superfeedr_creds')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (getvar('DEBUG') != 'False')
 
+DEBUG = (os.getenv('DEBUG') == 'True') 
+print("DEBUG : ",DEBUG)
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 ALLOWED_HOSTS = ['*']
 
 
@@ -117,7 +112,7 @@ EMAIL_HOST_PASSWORD = SECRETS['email_pass']
 '''
 
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = getvar("SENDGRID_API_KEY")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 # Toggle sandbox mode (when running in DEBUG mode)
 SENDGRID_SANDBOX_MODE_IN_DEBUG= False
 
@@ -141,10 +136,10 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  
+# https://docs.djangoproject.com/en/3.0/howto/static-files/ 
+ 
 STATIC_URL = '/static/'
-STATIC_ROOT='/static/'
+STATIC_ROOT= os.path.join(BASE_DIR, 'static_files')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'static'),
     ]

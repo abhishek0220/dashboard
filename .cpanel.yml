@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/iamabhishek40/dashboard/
+    - /bin/cp -R * $DEPLOYPATH
